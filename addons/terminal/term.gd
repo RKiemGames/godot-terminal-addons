@@ -115,7 +115,7 @@ func parse_command(text, pipe=false):
 	if command == 'godot':
 		command = OS.get_executable_path()
 		if args:
-			var gdfile = args[args.size() - 1] 
+			var gdfile = args[args.size() - 1]
 			if '.tscn' in gdfile or '.godot' in gdfile:
 				args[args.size() - 1]  = dir_path + '/' + gdfile
 			blocking = ('--help' in args or '-h' in args)
@@ -247,4 +247,3 @@ func _on_Password_text_entered(new_text):
 	OS.execute('env', base_args + sudo_args, true, output, false)
 	for o in output:
 		print_results(o)
-	
