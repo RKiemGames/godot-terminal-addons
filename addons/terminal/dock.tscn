@@ -1,8 +1,9 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://addons/terminal/term.gd" type="Script" id=1]
 [ext_resource path="res://addons/terminal/black.tres" type="StyleBox" id=2]
 [ext_resource path="res://addons/terminal/LiberationMono-Regular.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://addons/terminal/font.tres" type="DynamicFont" id=4]
 
 [sub_resource type="StyleBoxEmpty" id=1]
 
@@ -111,26 +112,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TextEdit" type="TextEdit" parent="."]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = -1.0
-margin_right = 3.05176e-05
-margin_bottom = -20.0
-readonly = true
-syntax_highlighting = true
-smooth_scrolling = true
-wrap_enabled = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="Title" type="RichTextLabel" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 4.0
-margin_right = 3.05176e-05
+custom_fonts/normal_font = ExtResource( 4 )
 bbcode_enabled = true
 bbcode_text = "Terminal 1.0 · RKiemGames · MIT Licence
 [tornado radius=5 freq=2][color=aqua]   ____             _         _
@@ -142,9 +127,8 @@ bbcode_text = "Terminal 1.0 · RKiemGames · MIT Licence
    | | / _ \\| '__|| '_ ` _ \\ | || '_ \\  / _` || |
    | ||  __/| |   | | | | | || || | | || (_| || |
    |_| \\___||_|   |_| |_| |_||_||_| |_| \\__,_||_|[/color][/tornado]
-LIST COMMANDS:
-[color=aqua]help[/color] [color=gray]# show this message. add --all show all.[/color]
-[color=aqua]godot[/color] [color=red]scene/file.tscn[/color] [color=gray]# run a scene.[/color]
+Type [color=aqua]help[/color] [color=gray]# show this message. add --all show all.[/color]
+Type [color=aqua]godot[/color] [color=red]scene/file.tscn[/color] [color=gray]# run a scene.[/color]
 [color=gray]# shell commands are accepted[/color]"
 text = "Terminal 1.0 · RKiemGames · MIT Licence
    ____             _         _
@@ -156,36 +140,56 @@ text = "Terminal 1.0 · RKiemGames · MIT Licence
    | | / _ \\| '__|| '_ ` _ \\ | || '_ \\  / _` || |
    | ||  __/| |   | | | | | || || | | || (_| || |
    |_| \\___||_|   |_| |_| |_||_||_| |_| \\__,_||_|
-LIST COMMANDS:
-help # show this message. add --all show all.
-godot scene/file.tscn # run a scene.
+Type help # show this message. add --all show all.
+Type godot scene/file.tscn # run a scene.
 # shell commands are accepted"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-anchor_top = 1.0
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = -20.0
-margin_bottom = -8.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Prompt" type="Label" parent="HBoxContainer"]
-margin_right = 42.0
-margin_bottom = 12.0
+[node name="TextEdit" type="TextEdit" parent="VBoxContainer"]
+margin_right = 1024.0
+margin_bottom = 582.0
+size_flags_vertical = 3
+custom_fonts/font = ExtResource( 4 )
+readonly = true
+syntax_highlighting = true
+smooth_scrolling = true
+wrap_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 586.0
+margin_right = 1024.0
+margin_bottom = 600.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Prompt" type="Label" parent="VBoxContainer/HBoxContainer"]
+margin_right = 49.0
+margin_bottom = 14.0
+custom_fonts/font = ExtResource( 4 )
 text = "res://>"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LineEdit" type="LineEdit" parent="HBoxContainer"]
-margin_left = 46.0
-margin_right = 118.0
-margin_bottom = 12.0
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer"]
+margin_left = 53.0
+margin_right = 1024.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 4 )
 expand_to_text_length = true
 placeholder_alpha = 1.0
 caret_blink = true
@@ -203,8 +207,8 @@ window_title = "password:"
 anchor_right = 1.0
 anchor_bottom = 1.0
 secret = true
-[connection signal="gui_input" from="TextEdit" to="." method="_on_TextEdit_gui_input"]
 [connection signal="gui_input" from="Title" to="." method="_on_Title_gui_input"]
-[connection signal="gui_input" from="HBoxContainer/LineEdit" to="." method="_on_LineEdit_gui_input"]
-[connection signal="text_entered" from="HBoxContainer/LineEdit" to="." method="_on_LineEdit_text_entered"]
+[connection signal="gui_input" from="VBoxContainer/TextEdit" to="." method="_on_TextEdit_gui_input"]
+[connection signal="gui_input" from="VBoxContainer/HBoxContainer/LineEdit" to="." method="_on_LineEdit_gui_input"]
+[connection signal="text_entered" from="VBoxContainer/HBoxContainer/LineEdit" to="." method="_on_LineEdit_text_entered"]
 [connection signal="text_entered" from="Dialog/Password" to="." method="_on_Password_text_entered"]

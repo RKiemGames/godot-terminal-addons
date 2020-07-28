@@ -1,10 +1,13 @@
 tool
 extends Control
 
+onready var InputTerminal = $VBoxContainer/HBoxContainer/LineEdit
+onready var Terminal = $VBoxContainer/TextEdit
+onready var Prompt = $VBoxContainer/HBoxContainer/Prompt
 var dir_path = '.'
 var cmd_directory = ['ls', 'dir']
 var command_history = []
-var history_file = '.history'
+var history_file = OS.get_system_dir(2)  +"/.terminal_godot_history"
 var history_enabled = false
 var current_history_index = -1
 var command_split = RegEx.new()
@@ -46,7 +49,7 @@ Report bugs to rkiemgames@gmail.com
 
 
 func _ready():
-	$TextEdit.insert_text_at_cursor("")
+	Terminal.insert_text_at_cursor("")
 	var file = File.new()
 	if file.file_exists(history_file):
 		file.open(history_file, File.READ)
@@ -61,14 +64,14 @@ func _on_LineEdit_gui_input(event):
 	if event is InputEventKey and event.scancode in [KEY_UP, KEY_DOWN] and command_history.size():
 		prints(command_history)
 		history_enabled = true
-		$HBoxContainer/LineEdit.disconnect("gui_input", self, "_on_LineEdit_gui_input")
+		InputTerminal.disconnect("gui_input", self, "_on_LineEdit_gui_input")
 		if event.scancode == KEY_UP and current_history_index > 0:
 			current_history_index -= 1
 		if event.scancode == KEY_DOWN and current_history_index < command_history.size() - 1:
 			current_history_index += 1
-		$HBoxContainer/LineEdit.text = command_history[current_history_index]
-		$HBoxContainer/LineEdit.connect("gui_input", self, "_on_LineEdit_gui_input")
-		$HBoxContainer/LineEdit.grab_focus()
+		InputTerminal.text = command_history[current_history_index]
+		InputTerminal.connect("gui_input", self, "_on_LineEdit_gui_input")
+		InputTerminal.grab_focus()
 	if event is InputEventKey and not event.scancode in [KEY_ENTER, KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN]:
 		history_enabled = false
 
@@ -108,7 +111,7 @@ func parse_command(text, pipe=false):
 		if fg == bg || fg == null:
 			fg = bg.inverted()
 		$Background.color = bg
-		$TextEdit.modulate = fg
+		Terminal.modulate = fg
 		$HBoxContainer.modulate = fg
 		return
 
@@ -145,10 +148,10 @@ func parse_command(text, pipe=false):
 			print_results('directory not exists: %s' % chdir)
 			dir_path = current_dir
 			return
-		$HBoxContainer/Prompt.text = 'res://%s>' % dir_path.replace('.', '')
+		Prompt.text = 'res://%s>' % dir_path.replace('.', '')
 		return
 	if command == 'pwd':
-		print_results($HBoxContainer/Prompt.text.replace('>', ''))
+		print_results(Prompt.text.replace('>', ''))
 		return
 	if command == 'history':
 		var l = 1
@@ -170,16 +173,16 @@ func parse_command(text, pipe=false):
 	for l in output:
 		result += l
 	if command in ['reset', 'clear', 'cls']:
-		$TextEdit.text = ""
+		Terminal.text = ""
 		return
 	return result
 
 
 func print_results(result):
-	$TextEdit.cursor_set_line($TextEdit.get_line_count() - 1)
-	$TextEdit.cursor_set_column(0)
-	$TextEdit.insert_text_at_cursor("%s" % result)
-	$TextEdit.clear_undo_history()
+	Terminal.cursor_set_line(Terminal.get_line_count() - 1)
+	Terminal.cursor_set_column(0)
+	Terminal.insert_text_at_cursor("%s" % result)
+	Terminal.clear_undo_history()
 
 func update_history(text):
 	if history_enabled:
@@ -201,7 +204,7 @@ func enter_text(new_text):
 	current_history_index = command_history.size()
 	var pipe_command = new_text.split('|')
 	var result = null
-	$HBoxContainer/LineEdit.text = ""
+	InputTerminal.text = ""
 	if pipe_command.size() > 1:
 		var f = File.new()
 		var array_cmd = []
@@ -231,11 +234,11 @@ func _on_LineEdit_text_entered(new_text):
 
 
 func _on_Title_gui_input(event):
-	$HBoxContainer/LineEdit.grab_focus()
+	InputTerminal.grab_focus()
 
 
 func _on_TextEdit_gui_input(event):
-	$HBoxContainer/LineEdit.grab_focus()
+	InputTerminal.grab_focus()
 
 
 func _on_Password_text_entered(new_text):
