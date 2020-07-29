@@ -1,8 +1,7 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://addons/terminal/term.gd" type="Script" id=1]
 [ext_resource path="res://addons/terminal/black.tres" type="StyleBox" id=2]
-[ext_resource path="res://addons/terminal/LiberationMono-Regular.ttf" type="DynamicFontData" id=3]
 [ext_resource path="res://addons/terminal/font.tres" type="DynamicFont" id=4]
 
 [sub_resource type="StyleBoxEmpty" id=1]
@@ -15,12 +14,8 @@
 
 [sub_resource type="StyleBoxEmpty" id=5]
 
-[sub_resource type="DynamicFont" id=6]
-size = 10
-font_data = ExtResource( 3 )
-
 [sub_resource type="Theme" id=7]
-default_font = SubResource( 6 )
+default_font = ExtResource( 4 )
 LineEdit/colors/clear_button_color = Color( 0.88, 0.88, 0.88, 1 )
 LineEdit/colors/clear_button_color_pressed = Color( 1, 1, 1, 1 )
 LineEdit/colors/cursor_color = Color( 0.94, 0.94, 0.94, 1 )
@@ -115,7 +110,6 @@ __meta__ = {
 [node name="Title" type="RichTextLabel" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-custom_fonts/normal_font = ExtResource( 4 )
 bbcode_enabled = true
 bbcode_text = "Terminal 1.0 · RKiemGames · MIT Licence
 [tornado radius=5 freq=2][color=aqua]   ____             _         _
@@ -158,7 +152,6 @@ __meta__ = {
 margin_right = 1024.0
 margin_bottom = 582.0
 size_flags_vertical = 3
-custom_fonts/font = ExtResource( 4 )
 readonly = true
 syntax_highlighting = true
 smooth_scrolling = true
@@ -178,7 +171,6 @@ __meta__ = {
 [node name="Prompt" type="Label" parent="VBoxContainer/HBoxContainer"]
 margin_right = 49.0
 margin_bottom = 14.0
-custom_fonts/font = ExtResource( 4 )
 text = "res://>"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -189,7 +181,6 @@ margin_left = 53.0
 margin_right = 1024.0
 margin_bottom = 14.0
 size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 4 )
 expand_to_text_length = true
 placeholder_alpha = 1.0
 caret_blink = true
