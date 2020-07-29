@@ -6,7 +6,7 @@
 [node name="Control" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 0, 220 )
+rect_min_size = Vector2( 0, 226 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource( 2 )
@@ -88,17 +88,17 @@ __meta__ = {
 }
 
 [node name="Prompt" type="Label" parent="HBoxContainer"]
-margin_right = 42.0
-margin_bottom = 12.0
+margin_right = 49.0
+margin_bottom = 14.0
 text = "res://>"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="LineEdit" type="LineEdit" parent="HBoxContainer"]
-margin_left = 46.0
-margin_right = 118.0
-margin_bottom = 12.0
+margin_left = 53.0
+margin_right = 137.0
+margin_bottom = 14.0
 expand_to_text_length = true
 placeholder_alpha = 1.0
 caret_blink = true
