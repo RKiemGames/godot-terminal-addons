@@ -39,6 +39,9 @@ theme:
 	Example:
 		color ff000000 ffffffff  # ARGB format
 		color back white  # X11 names format
+	font:			change font attributes: font <size> [<outliner-size> [outliner-color]]
+	Example with default values:
+		font 12 0 white #color supported format
 
 Terminal 1.0 - RKiemGames - MIT Licence
 Report bugs to rkiemgames@gmail.com
@@ -110,6 +113,22 @@ func parse_command(text, pipe=false):
 		$Background.color = bg
 		$TextEdit.modulate = fg
 		$HBoxContainer.modulate = fg
+		return
+	if command == 'font':
+		var fz = int(args[0])
+		var foz = 0
+		var foc = ColorN('white')
+		if args.size() > 1:
+			foz = int(args[1])
+		if args.size() > 2:
+			foc = Color(args[2])
+			if not foc:
+				foc = ColorN(args[2])
+		var dynamic_font:DynamicFont = get_theme().default_font
+		dynamic_font.size = fz
+		dynamic_font.outline_size = foz
+		dynamic_font.outline_color = foc
+		dynamic_font.update_changes()
 		return
 
 	if command == 'godot':

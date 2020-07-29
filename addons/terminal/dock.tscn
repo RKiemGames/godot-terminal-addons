@@ -6,7 +6,7 @@
 [node name="Control" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 0, 210 )
+rect_min_size = Vector2( 0, 220 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource( 2 )
@@ -107,6 +107,7 @@ __meta__ = {
 }
 
 [node name="Dialog" type="WindowDialog" parent="."]
+visible = true
 margin_right = 330.0
 margin_bottom = 24.0
 popup_exclusive = true
@@ -115,7 +116,12 @@ window_title = "password:"
 [node name="Password" type="LineEdit" parent="Dialog"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_left = 5.0
+margin_right = -5.0
 secret = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="gui_input" from="TextEdit" to="." method="_on_TextEdit_gui_input"]
 [connection signal="gui_input" from="Title" to="." method="_on_Title_gui_input"]
 [connection signal="gui_input" from="HBoxContainer/LineEdit" to="." method="_on_LineEdit_gui_input"]
