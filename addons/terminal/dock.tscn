@@ -55,10 +55,10 @@ bbcode_text = "Terminal 1.0.1 · RKiemGames · MIT Licence
    | | / _ \\| '__|| '_ ` _ \\ | || '_ \\  / _` || |
    | ||  __/| |   | | | | | || || | | || (_| || |
    |_| \\___||_|   |_| |_| |_||_||_| |_| \\__,_||_|[/color][/tornado]
-LIST COMMANDS:
-[color=aqua]help[/color] [color=gray]# show this message. add --all show all.[/color]
-[color=aqua]godot[/color] [color=red]scene/file.tscn[/color] [color=gray]# run a scene.[/color]
-[color=gray]# shell commands are accepted[/color]"
+
+Type [color=aqua]help[/color] [color=gray]# show this message. add --all show all.[/color]
+Type [color=aqua]godot[/color] [color=red]scene/file.tscn[/color] [color=gray]# run a scene.[/color]
+[color=gray]# shell commands work![/color]"
 text = "Terminal 1.0.1 · RKiemGames · MIT Licence
    ____             _         _
   / ___|  ___    __| |  ___  | |_
@@ -69,10 +69,10 @@ text = "Terminal 1.0.1 · RKiemGames · MIT Licence
    | | / _ \\| '__|| '_ ` _ \\ | || '_ \\  / _` || |
    | ||  __/| |   | | | | | || || | | || (_| || |
    |_| \\___||_|   |_| |_| |_||_||_| |_| \\__,_||_|
-LIST COMMANDS:
-help # show this message. add --all show all.
-godot scene/file.tscn # run a scene.
-# shell commands are accepted"
+
+Type help # show this message. add --all show all.
+Type godot scene/file.tscn # run a scene.
+# shell commands work!"
 __meta__ = {
 "_edit_use_anchors_": false
 }
