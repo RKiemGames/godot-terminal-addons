@@ -45,7 +45,7 @@ anchor_bottom = 1.0
 margin_left = 4.0
 margin_right = 3.05176e-05
 bbcode_enabled = true
-bbcode_text = "Terminal 1.0 · RKiemGames · MIT Licence
+bbcode_text = "Terminal 1.0.1 · RKiemGames · MIT Licence
 [tornado radius=5 freq=2][color=aqua]   ____             _         _
   / ___|  ___    __| |  ___  | |_
  | |  _  / _ \\  / _` | / _ \\ | __|
@@ -59,7 +59,7 @@ LIST COMMANDS:
 [color=aqua]help[/color] [color=gray]# show this message. add --all show all.[/color]
 [color=aqua]godot[/color] [color=red]scene/file.tscn[/color] [color=gray]# run a scene.[/color]
 [color=gray]# shell commands are accepted[/color]"
-text = "Terminal 1.0 · RKiemGames · MIT Licence
+text = "Terminal 1.0.1 · RKiemGames · MIT Licence
    ____             _         _
   / ___|  ___    __| |  ___  | |_
  | |  _  / _ \\  / _` | / _ \\ | __|
@@ -107,18 +107,40 @@ __meta__ = {
 }
 
 [node name="Dialog" type="WindowDialog" parent="."]
-visible = true
+margin_top = -64.0
 margin_right = 330.0
-margin_bottom = 24.0
+margin_bottom = -32.0
 popup_exclusive = true
-window_title = "password:"
+window_title = "Credentials:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="User" type="LineEdit" parent="Dialog"]
+visible = false
+anchor_right = 1.0
+margin_left = 5.0
+margin_top = 5.0
+margin_right = -5.00003
+margin_bottom = 24.0
+rect_min_size = Vector2( 0, 24 )
+placeholder_text = "Username"
+placeholder_alpha = 0.363
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Password" type="LineEdit" parent="Dialog"]
+anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 5.0
+margin_top = -12.0
 margin_right = -5.0
+margin_bottom = -5.0
+rect_min_size = Vector2( 0, 24 )
 secret = true
+placeholder_text = "Password"
 __meta__ = {
 "_edit_use_anchors_": false
 }

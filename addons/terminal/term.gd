@@ -3,15 +3,18 @@ extends Control
 
 var dir_path = '.'
 var cmd_directory = ['ls', 'dir']
+var history_loaded = false
 var command_history = []
-var history_file = '.history'
+var history_file = 'user://.gdterm_history'
 var history_enabled = false
 var current_history_index = -1
 var command_split = RegEx.new()
-var pipe_file = '.gdterm_pipe'
+var pipe_file = 'user://.gdterm_pipe'
 var cd = Directory.new()
+var file = File.new()
 var base_dir = "res://"
 var sudo_args = []
+var password_commands = ['sudo', 'git']
 var help_full = """
 help:
 	usage: help [--all]
@@ -50,7 +53,10 @@ Report bugs to rkiemgames@gmail.com
 
 func _ready():
 	$TextEdit.insert_text_at_cursor("")
-	var file = File.new()
+	load_history()
+
+
+func load_history():
 	if file.file_exists(history_file):
 		file.open(history_file, File.READ)
 		var content = file.get_as_text()
@@ -58,11 +64,13 @@ func _ready():
 		for cmd in content.split('\n', false):
 			command_history.append(cmd)
 		current_history_index = command_history.size()
+	history_loaded = true
 
 
 func _on_LineEdit_gui_input(event):
+	if not history_loaded:
+		load_history()
 	if event is InputEventKey and event.scancode in [KEY_UP, KEY_DOWN] and command_history.size():
-		prints(command_history)
 		history_enabled = true
 		$HBoxContainer/LineEdit.disconnect("gui_input", self, "_on_LineEdit_gui_input")
 		if event.scancode == KEY_UP and current_history_index > 0:
@@ -91,7 +99,9 @@ func parse_command(text, pipe=false):
 		a = a.replace("'", '').replace('"', '').replace('·', ' ')
 		args.append(a)
 	if pipe:
-		args.append(pipe_file)
+		file.open(pipe_file, File.READ)
+		args.append(file.get_path_absolute())
+		file.close()
 	var output = []
 	result = ""
 	if command == 'help':
@@ -130,7 +140,34 @@ func parse_command(text, pipe=false):
 		dynamic_font.outline_color = foc
 		dynamic_font.update_changes()
 		return
-
+	if command == 'git':
+		if 'push' in args:
+			var dargs = args
+			dargs.pop_front()
+			var repo = 'origin'
+			if dargs.size() > 1:
+				var aux_args = []
+				for a in dargs:
+					if not a.begins_with('-'):
+						break
+					aux_args.append(a)
+					dargs.pop_front()
+				if dargs.size() > 1:
+					repo = dargs[0]
+					dargs.pop_front()
+			OS.execute("git", ['remote', 'get-url', '--push', repo], true, output)
+			var git_url = output[0]
+			if not git_url.begins_with('git@'):
+				var url = git_url.rsplit('//')[1]
+				if '@' in url:
+					var user = url.rsplit('@')[0]
+					$Dialog/User.text = user
+					git_url = git_url.replace('%s@' % user, '')
+				$Dialog.set_meta('args', dargs)
+				$Dialog.set_meta('git_url', git_url)
+				open_dialog('git_push', true)
+				return
+			output = []
 	if command == 'godot':
 		command = OS.get_executable_path()
 		if args:
@@ -176,9 +213,7 @@ func parse_command(text, pipe=false):
 			l+=1
 		return
 	if command == 'sudo':
-		$Dialog/Password.text = ""
-		$Dialog.popup_centered(Vector2(330,24))
-		$Dialog/Password.grab_focus()
+		open_dialog(command)
 		sudo_args = args
 		return
 	if command in cmd_directory:
@@ -194,11 +229,26 @@ func parse_command(text, pipe=false):
 	return result
 
 
+func open_dialog(command, username=false):
+	var height = 32
+	$Dialog/Password.margin_top = -12
+	$Dialog/User.visible = false
+	$Dialog.set_meta('command', command)
+	if username:
+		height = 64
+		$Dialog/Password.margin_top = 3
+		$Dialog/User.visible = true
+	$Dialog/Password.text = ""
+	$Dialog.popup_centered(Vector2(330,height))
+	$Dialog/Password.grab_focus()
+
+
 func print_results(result):
 	$TextEdit.cursor_set_line($TextEdit.get_line_count() - 1)
 	$TextEdit.cursor_set_column(0)
 	$TextEdit.insert_text_at_cursor("%s" % result)
 	$TextEdit.clear_undo_history()
+
 
 func update_history(text):
 	if history_enabled:
@@ -233,11 +283,11 @@ func enter_text(new_text):
 		f.close()
 		for cmd in array_cmd:
 			result = parse_command(cmd, true)
-			OS.execute('rm', [pipe_file], true, [], true)
+			cd.remove(pipe_file)
 			f.open(pipe_file, File.WRITE)
 			f.store_string(result)
 			f.close()
-		OS.execute('rm', [pipe_file], true, [], true)
+		cd.remove(pipe_file)
 		print_results(result)
 		return
 	result = parse_command(new_text)
@@ -257,12 +307,33 @@ func _on_TextEdit_gui_input(event):
 	$HBoxContainer/LineEdit.grab_focus()
 
 
-func _on_Password_text_entered(new_text):
+func _on_git_push(password):
+	var git_url = $Dialog.get_meta('git_url').rsplit('//')
+	var args = $Dialog.get_meta('args')
+	var prefix = git_url[0]
+	var repo = git_url[1].replace('\n','')
+	var user = $Dialog/User.text
 	var output = []
+	password = HTTPClient.new().query_string_from_dict({u=password}).replace('u=', '')
 	$Dialog.visible = false
-	print_results("running...")
-	yield(get_tree().create_timer(1), 'timeout')
-	var base_args = ['SUDO_PASS=%s' % new_text, 'SUDO_ASKPASS=addons/terminal/pass.sh','sudo', '-A']
+	yield(get_tree().create_timer(0.034), 'timeout')
+	OS.execute('git', ['push', '%s//%s:%s@%s' % [prefix, user, password, repo]] + args, true, output, true)
+	for o in output:
+		print_results(o.replace(':%s' % password, ':*****'))
+		o = null
+	output = []
+
+
+func _on_sudo(password):
+	var output = []
+	var base_args = ['SUDO_PASS=%s' % password, 'SUDO_ASKPASS=addons/terminal/pass.sh','sudo', '-A']
+	$Dialog.visible = false
+	yield(get_tree().create_timer(0.034), 'timeout')
 	OS.execute('env', base_args + sudo_args, true, output, false)
 	for o in output:
 		print_results(o)
+		o = null
+
+
+func _on_Password_text_entered(password):
+	call('_on_%s' % $Dialog.get_meta('command'), password)
