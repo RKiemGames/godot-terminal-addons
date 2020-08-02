@@ -45,7 +45,7 @@ anchor_bottom = 1.0
 margin_left = 4.0
 margin_right = 3.05176e-05
 bbcode_enabled = true
-bbcode_text = "Terminal 1.0.1 · RKiemGames · MIT Licence
+bbcode_text = "Terminal 1.0.2 · RKiemGames · MIT Licence
 [tornado radius=5 freq=2][color=aqua]   ____             _         _
   / ___|  ___    __| |  ___  | |_
  | |  _  / _ \\  / _` | / _ \\ | __|
@@ -59,7 +59,7 @@ bbcode_text = "Terminal 1.0.1 · RKiemGames · MIT Licence
 Type [color=aqua]help[/color] [color=gray]# show this message. add --all show all.[/color]
 Type [color=aqua]godot[/color] [color=red]scene/file.tscn[/color] [color=gray]# run a scene.[/color]
 [color=gray]# shell commands work![/color]"
-text = "Terminal 1.0.1 · RKiemGames · MIT Licence
+text = "Terminal 1.0.2 · RKiemGames · MIT Licence
    ____             _         _
   / ___|  ___    __| |  ___  | |_
  | |  _  / _ \\  / _` | / _ \\ | __|
