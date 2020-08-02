@@ -192,10 +192,12 @@ func parse_command(text, pipe=false):
 				elif d == '.' or dirs.size() == 0:
 					continue
 				else:
-					dirs.append(d)
+					dirs.insert(0, d)
 			back_dir = null
-			dir_path = dirs.join('/')
+			dir_path = dirs.join('/').replace('/.', '')
 		else:
+			dir_path = '.'
+		if not dir_path:
 			dir_path = '.'
 		if not cd.dir_exists('res://%s' % dir_path):
 			print_results('directory not exists: %s' % chdir)
