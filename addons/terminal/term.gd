@@ -16,9 +16,9 @@ var base_dir = "res://"
 var sudo_args = []
 var password_commands = ['sudo', 'git']
 var help_full = """
-help:
-	usage: help [--all]
-	--all			Show all help
+intro:
+	usage: intro [--help]
+	--help			Show all help
 godot:
 	usage: godot [options] [path to scene or 'project.godot' file]
 	-h, --help		Display full help message.
@@ -46,12 +46,17 @@ theme:
 	Example with default values:
 		font 12 0 white #color supported format
 
-Terminal 1.0 - RKiemGames - MIT Licence
-Report bugs to rkiemgames@gmail.com
+Terminal {version} - RKiemGames - MIT Licence
+Report bugs: https://github.com/RKiemGames/godot-terminal-addons/issues
 """
 
-
 func _ready():
+	var config = ConfigFile.new()
+	config.load('addons/terminal/plugin.cfg')
+	var version = config.get_value('plugin', 'version')
+	config = null
+	help_full = help_full.replace('{version}', version)
+	$Title.bbcode_text = $Title.bbcode_text.replace('{version}', version)
 	$TextEdit.insert_text_at_cursor("")
 	load_history()
 
@@ -104,9 +109,9 @@ func parse_command(text, pipe=false):
 		file.close()
 	var output = []
 	result = ""
-	if command == 'help':
+	if command == 'intro':
 		$Title.visible = true
-		if '--all' in args:
+		if '--help' in args:
 			$Title.visible = false
 			print_results(help_full)
 		return
@@ -182,28 +187,31 @@ func parse_command(text, pipe=false):
 		var current_dir = dir_path
 		if args:
 			chdir = args[0]
-		var dirs = dir_path.split('/', true)
 		if chdir:
-			var back_dir = chdir.split('/', false)
-			back_dir.invert()
-			for d in back_dir:
-				if d == '..' and dirs.size():
-					dirs.remove(dirs.size() - 1)
-				elif d == '.' or dirs.size() == 0:
-					continue
-				else:
-					dirs.insert(0, d)
-			back_dir = null
-			dir_path = dirs.join('/').replace('/.', '')
+			var dirs = (dir_path + '/' + chdir).split('/', false)
+			var di = 0
+			for d in dirs:
+				if d == '..':
+					dirs.remove(di)
+					di -= 1
+					if di >= 0:
+						dirs.remove(di)
+						di -= 1
+				elif d == '.':
+					dirs.remove(di)
+					di -= 1
+				di += 1
+			dir_path = dirs.join('/')
+			dirs = null
 		else:
 			dir_path = '.'
 		if not dir_path:
 			dir_path = '.'
 		if not cd.dir_exists('res://%s' % dir_path):
-			print_results('directory not exists: %s' % chdir)
+			print_results('directory not exists: %s\n' % chdir)
 			dir_path = current_dir
 			return
-		$HBoxContainer/Prompt.text = 'res://%s>' % dir_path.replace('.', '')
+		$HBoxContainer/Prompt.text = 'res://%s>' % dir_path.lstrip('.')
 		return
 	if command == 'pwd':
 		print_results($HBoxContainer/Prompt.text.replace('>', ''))
@@ -214,12 +222,14 @@ func parse_command(text, pipe=false):
 			print_results("%s\t%s\n" % [str(l),c])
 			l+=1
 		return
-	if command == 'sudo':
+	if command == 'sudo' and OS.get_name() != 'Windows':
 		open_dialog(command)
 		sudo_args = args
 		return
 	if command in cmd_directory:
 		args.append(dir_path)
+	if command == 'start' and not '/?' in args:
+		blocking = false
 	OS.execute(command, args, blocking, output, true)
 	if not blocking:
 		return
