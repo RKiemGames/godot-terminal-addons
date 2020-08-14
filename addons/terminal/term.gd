@@ -146,9 +146,12 @@ func parse_command(text, pipe=false):
 		dynamic_font.update_changes()
 		return
 	if command == 'git':
-		if 'push' in args:
+		if 'push' in args or 'publish' in args:
 			var dargs = args
-			dargs.pop_front()
+			var fargs = dargs.pop_front()
+			if fargs == 'flow':
+				dargs.pop_front()
+				dargs.pop_front()
 			var repo = 'origin'
 			if dargs.size() > 1:
 				var aux_args = []
