@@ -23,7 +23,7 @@ godot:
 	usage: godot [options] [path to scene or 'project.godot' file]
 	-h, --help		Display full help message.
 	Example:
-		Run a scene on separated window:
+		Run a scene in a separate window:
 			godot [options] path/to/scene/file.tscn [arguments]
 shell commands:
 	you can use shell commnads like:
@@ -38,10 +38,10 @@ navigation:
 	pwd:			Show current dir.
 	reset:			Clean terminal.
 theme:
-	color:			change backgorund and foreground color
+	color:			change background and foreground color
 	Example:
 		color ff000000 ffffffff  # ARGB format
-		color back white  # X11 names format
+		color black white  # X11 names format
 	font:			change font attributes: font <size> [<outliner-size> [outliner-color]]
 	Example with default values:
 		font 12 0 white #color supported format
