@@ -1,4 +1,4 @@
-tool
+@tool
 extends Control
 
 var dir_path = '.'
@@ -56,8 +56,8 @@ func _ready():
 	var version = config.get_value('plugin', 'version')
 	config = null
 	help_full = help_full.replace('{version}', version)
-	$Title.bbcode_text = $Title.bbcode_text.replace('{version}', version)
-	$TextEdit.insert_text_at_cursor("")
+	$Title.text = $Title.text.replace('{version}', version)
+	$TextEdit.insert_text_at_caret("")
 	load_history()
 
 
@@ -75,17 +75,17 @@ func load_history():
 func _on_LineEdit_gui_input(event):
 	if not history_loaded:
 		load_history()
-	if event is InputEventKey and event.scancode in [KEY_UP, KEY_DOWN] and command_history.size():
+	if event is InputEventKey and event.keycode in [KEY_UP, KEY_DOWN] and command_history.size():
 		history_enabled = true
-		$HBoxContainer/LineEdit.disconnect("gui_input", self, "_on_LineEdit_gui_input")
-		if event.scancode == KEY_UP and current_history_index > 0:
+		$HBoxContainer/LineEdit.disconnect("gui_input", self._on_LineEdit_gui_input)
+		if event.keycode == KEY_UP and current_history_index > 0:
 			current_history_index -= 1
-		if event.scancode == KEY_DOWN and current_history_index < command_history.size() - 1:
+		if event.keycode == KEY_DOWN and current_history_index < command_history.size() - 1:
 			current_history_index += 1
 		$HBoxContainer/LineEdit.text = command_history[current_history_index]
-		$HBoxContainer/LineEdit.connect("gui_input", self, "_on_LineEdit_gui_input")
+		$HBoxContainer/LineEdit.connect("gui_input", self._on_LineEdit_gui_input)
 		$HBoxContainer/LineEdit.grab_focus()
-	if event is InputEventKey and not event.scancode in [KEY_ENTER, KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN]:
+	if event is InputEventKey and not event.keycode in [KEY_ENTER, KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN]:
 		history_enabled = false
 
 
@@ -97,7 +97,7 @@ func parse_command(text, pipe=false):
 	var result = text.rsplit(' ', false)
 	var command = result[0]
 	var args = []
-	result.remove(0)
+	result.remove_at(0)
 	for a in result:
 		if command == 'awk':
 			a = a.replace('$', '\\$')
@@ -117,12 +117,8 @@ func parse_command(text, pipe=false):
 		return
 	var blocking = true
 	if command == 'color':
-		var bg = Color(args[0])
-		var fg = Color(args[1])
-		if not bg:
-			bg = ColorN(args[0])
-		if not fg:
-			fg = ColorN(args[1])
+		var bg = Color.find_named_color(args[0])
+		var fg = Color.find_named_color(args[1])
 		if fg == bg || fg == null:
 			fg = bg.inverted()
 		$Background.color = bg
@@ -132,14 +128,14 @@ func parse_command(text, pipe=false):
 	if command == 'font':
 		var fz = int(args[0])
 		var foz = 0
-		var foc = ColorN('white')
+		var foc = Color.find_named_color('white')
 		if args.size() > 1:
 			foz = int(args[1])
 		if args.size() > 2:
 			foc = Color(args[2])
 			if not foc:
-				foc = ColorN(args[2])
-		var dynamic_font:DynamicFont = get_theme().default_font
+				foc = Color.find_named_color(args[2])
+		var dynamic_font:Font = get_theme().default_font
 		dynamic_font.size = fz
 		dynamic_font.outline_size = foz
 		dynamic_font.outline_color = foc
@@ -163,7 +159,7 @@ func parse_command(text, pipe=false):
 				if dargs.size() > 1:
 					repo = dargs[0]
 					dargs.pop_front()
-			OS.execute("git", ['remote', 'get-url', '--push', repo], true, output)
+			OS.execute("git", ['remote', 'get-url', '--push', repo], output)
 			var git_url = output[0]
 			if not git_url.begins_with('git@'):
 				var url = git_url.rsplit('//')[1]
@@ -233,7 +229,8 @@ func parse_command(text, pipe=false):
 		args.append(dir_path)
 	if command == 'start' and not '/?' in args:
 		blocking = false
-	OS.execute(command, args, blocking, output, true)
+	# TODO: Implicitly blocks. Use create_process if blocking == false.
+	OS.execute(command, args, output, true)
 	if not blocking:
 		return
 	for l in output:
@@ -259,9 +256,9 @@ func open_dialog(command, username=false):
 
 
 func print_results(result):
-	$TextEdit.cursor_set_line($TextEdit.get_line_count() - 1)
-	$TextEdit.cursor_set_column(0)
-	$TextEdit.insert_text_at_cursor("%s" % result)
+	$TextEdit.set_caret_line($TextEdit.get_line_count() - 1)
+	$TextEdit.set_caret_column(0)
+	$TextEdit.insert_text_at_caret("%s" % result)
 	$TextEdit.clear_undo_history()
 
 
@@ -331,8 +328,8 @@ func _on_git_push(password):
 	var output = []
 	password = HTTPClient.new().query_string_from_dict({u=password}).replace('u=', '')
 	$Dialog.visible = false
-	yield(get_tree().create_timer(0.034), 'timeout')
-	OS.execute('git', ['push', '%s//%s:%s@%s' % [prefix, user, password, repo]] + args, true, output, true)
+	await get_tree().create_timer(0.034).timeout
+	OS.execute('git', ['push', '%s//%s:%s@%s' % [prefix, user, password, repo]] + args, output, true)
 	for o in output:
 		print_results(o.replace(':%s' % password, ':*****'))
 		o = null
@@ -343,8 +340,8 @@ func _on_sudo(password):
 	var output = []
 	var base_args = ['SUDO_PASS=%s' % password, 'SUDO_ASKPASS=addons/terminal/pass.sh','sudo', '-A']
 	$Dialog.visible = false
-	yield(get_tree().create_timer(0.034), 'timeout')
-	OS.execute('env', base_args + sudo_args, true, output, false)
+	await get_tree().create_timer(0.034).timeout
+	OS.execute('env', base_args + sudo_args, output, false)
 	for o in output:
 		print_results(o)
 		o = null
