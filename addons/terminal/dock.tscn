@@ -1,25 +1,25 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://dauohnpg13v10"]
 
-[ext_resource path="res://addons/terminal/term.gd" type="Script" id=1]
-[ext_resource path="res://addons/terminal/theme/theme.tres" type="Theme" id=2]
+[ext_resource type="Script" path="res://addons/terminal/term.gd" id="1"]
+[ext_resource type="Theme" uid="uid://e0bhip2pr623" path="res://addons/terminal/theme/theme.tres" id="2"]
 
-[node name="Control" type="Control"]
+[node name="Terminal" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 0, 226 )
+rect_min_size = Vector2(0, 226)
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme = ExtResource( 2 )
-script = ExtResource( 1 )
+theme = ExtResource( "2" )
+script = ExtResource( "1" )
 __meta__ = {
-"_edit_horizontal_guides_": [ 280.0 ],
+"_edit_horizontal_guides_": [280.0],
 "_edit_use_anchors_": false
 }
 
 [node name="Background" type="ColorRect" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color( 0, 0, 0, 1 )
+color = Color(0, 0, 0, 1)
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -27,14 +27,7 @@ __meta__ = {
 [node name="TextEdit" type="TextEdit" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = -1.0
-margin_right = 3.05176e-05
-margin_bottom = -20.0
-readonly = true
-syntax_highlighting = true
-smooth_scrolling = true
-wrap_enabled = true
+offset_bottom = -43.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -42,24 +35,8 @@ __meta__ = {
 [node name="Title" type="RichTextLabel" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 4.0
-margin_right = 3.05176e-05
-bbcode_enabled = true
-bbcode_text = "Terminal {version} · RKiemGames · MIT Licence
-[tornado radius=5 freq=2][color=aqua]   ____             _         _
-  / ___|  ___    __| |  ___  | |_
- | |  _  / _ \\  / _` | / _ \\ | __|
- | |_| || (_) || (_| || (_) || |_
-  \\____| \\___/  \\__,_| \\___/  \\__|             [/color][color=red]_
- |_   _|___  _ __  _ __ ___  (_) _ __    __ _ | |
-   | | / _ \\| '__|| '_ ` _ \\ | || '_ \\  / _` || |
-   | ||  __/| |   | | | | | || || | | || (_| || |
-   |_| \\___||_|   |_| |_| |_||_||_| |_| \\__,_||_|[/color][/tornado]
-
-Type [color=aqua]intro[/color] [color=gray]# show this message. add --help show all.[/color]
-Type [color=aqua]godot[/color] [color=red]scene/file.tscn[/color] [color=gray]# run a scene.[/color]
-[color=gray]# shell commands work![/color]"
-text = "Terminal {version} · RKiemGames · MIT Licence
+theme_override_font_sizes/normal_font_size = 16
+text = "Terminal 1.2.4 · RKiemGames · MIT Licence
    ____             _         _
   / ___|  ___    __| |  ___  | |_
  | |  _  / _ \\  / _` | / _ \\ | __|
@@ -73,6 +50,7 @@ text = "Terminal {version} · RKiemGames · MIT Licence
 Type intro # show this message. add --help show all.
 Type godot scene/file.tscn # run a scene.
 # shell commands work!"
+bbcode_enabled = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -81,24 +59,27 @@ __meta__ = {
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = -20.0
-margin_bottom = -8.0
+offset_left = 2.0
+offset_top = -42.0
+offset_right = 2.0
+offset_bottom = -20.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Prompt" type="Label" parent="HBoxContainer"]
-margin_right = 49.0
-margin_bottom = 14.0
+offset_right = 70.0
+offset_bottom = 22.0
 text = "res://>"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="LineEdit" type="LineEdit" parent="HBoxContainer"]
-margin_left = 53.0
-margin_right = 137.0
-margin_bottom = 14.0
+offset_left = 74.0
+offset_right = 114.0
+offset_bottom = 22.0
+theme_override_font_sizes/font_size = 16
 expand_to_text_length = true
 placeholder_alpha = 1.0
 caret_blink = true
@@ -106,12 +87,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Dialog" type="WindowDialog" parent="."]
-margin_top = -64.0
-margin_right = 330.0
-margin_bottom = -32.0
-popup_exclusive = true
-window_title = "Credentials:"
+[node name="Dialog" type="Node" parent="."]
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -119,11 +95,7 @@ __meta__ = {
 [node name="User" type="LineEdit" parent="Dialog"]
 visible = false
 anchor_right = 1.0
-margin_left = 5.0
-margin_top = 5.0
-margin_right = -5.00003
-margin_bottom = 24.0
-rect_min_size = Vector2( 0, 24 )
+rect_min_size = Vector2(0, 24)
 placeholder_text = "Username"
 placeholder_alpha = 0.363
 __meta__ = {
@@ -131,21 +103,19 @@ __meta__ = {
 }
 
 [node name="Password" type="LineEdit" parent="Dialog"]
+visible = false
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 5.0
-margin_top = -12.0
-margin_right = -5.0
-margin_bottom = -5.0
-rect_min_size = Vector2( 0, 24 )
+rect_min_size = Vector2(0, 24)
 secret = true
 placeholder_text = "Password"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
 [connection signal="gui_input" from="TextEdit" to="." method="_on_TextEdit_gui_input"]
 [connection signal="gui_input" from="Title" to="." method="_on_Title_gui_input"]
 [connection signal="gui_input" from="HBoxContainer/LineEdit" to="." method="_on_LineEdit_gui_input"]
-[connection signal="text_entered" from="HBoxContainer/LineEdit" to="." method="_on_LineEdit_text_entered"]
-[connection signal="text_entered" from="Dialog/Password" to="." method="_on_Password_text_entered"]
+[connection signal="text_submitted" from="HBoxContainer/LineEdit" to="." method="_on_LineEdit_text_entered"]
+[connection signal="text_submitted" from="Dialog/Password" to="." method="_on_Password_text_entered"]
